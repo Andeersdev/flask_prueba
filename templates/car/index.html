@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart-CRUD</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    {% include 'layouts/navbar.html' %}
+
+    <div class="container mt-5">
+        <button class="btn btn-primary mb-3" id="btnModal" onclick="openModal()">Agregar Carro</button>
+        <table class="table table-hover">
+            <thead class="table-dark" style="text-transform: lowercase !important;;">
+                <th>Id</th>
+                <th>Imagen</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Año</th>
+                <th>Cilindraje</th>
+                <th>Velocidad</th>
+                <th>Acciones</th>
+            </thead>
+            <tbody>
+                {% if cars %}
+                {% for car in cars %}
+                <tr>
+                    <td>{{car.id}}</td>
+                    <td>
+                        <img style="width: 50px;" src="{{url_for('static', filename='images/'+car.photo)}}"
+                            alt="{{car.brand}}">
+                    </td>
+                    <td>{{car.brand}}</td>
+                    <td>{{car.model}}</td>
+                    <td>{{car.color}}</td>
+                    <td>{{car.year}}</td>
+                    <td>{{car.cylinder_capacity}}</td>
+                    <td>{{car.velocity}}</td>
+                    <td>
+                        <div class="text-center">
+                            <button class="btn btn-info btn-sm" onclick="show_detail({{car.id}})" title="Detalle"><i
+                                    class="fa-solid fa-eye"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="delete_car({{car.id}})" title="Eliminar"><i
+                                    class="fa-solid fa-x"></i></button>
+                            <button class="btn btn-success btn-sm" onclick="show_data({{car.id}})" title="Editar"><i
+                                    class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <td colspan="10" class="text-center">No hay registros.</td>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalTitle"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="brand" class="form-label">Marca</label>
+                                <input type="text" class="form-control" name="brand" id="brand" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="model" class="form-label">Modelo</label>
+                                <input type="text" class="form-control" name="model" id="model" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="color" class="form-label">Color</label>
+                                <select class="form-control" name="color" id="color" required>
+                                    <option value="">---SELECCIONE---</option>
+                                    <option value="black">Negro</option>
+                                    <option value="blue">Azul</option>
+                                    <option value="red">Rojo</option>
+                                    <option value="silver">Plata</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="year" class="form-label">Año</label>
+                                <input type="number" class="form-control" name="year" id="year" min="1990" max="2024"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="doors" class="form-label">Puertas</label>
+                                <select class="form-control" name="doors" id="doors" required>
+                                    <option value="">---SELECCIONE---</option>
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="favorite" class="form-label">Favorito</label>
+                                <select class="form-control" name="favorite" id="favorite" required>
+                                    <option value="">---SELECCIONE---</option>
+                                    <option value="1">Si</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="photo" class="form-label">Imagen</label>
+                                <input type="file" class="form-control" name="photo" id="photo" accept="image/*"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cylinder_capacity" class="form-label">Cilindraje</label>
+                                <input type="number" class="form-control" name="cylinder_capacity"
+                                    id="cylinder_capacity" min="100" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="velocity" class="form-label">Velocidad</label>
+                                <input type="number" class="form-control" name="velocity" id="velocity" min="100"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" id="btnModalAction" onclick="save()" class="btn">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail-->
+    <div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Detalle del Registro</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card mx-auto" style="width: 18rem; border: none !important;">
+                        <img id="photo_detail" src="" class="card-img-top" alt="">
+                        <div class="card-body">
+                            <b>Marca:</b>
+                            <p class="card-text" id="brand_detail"></p>
+                            <b>Modelo:</b>
+                            <p class="card-text" id="model_detail"></p>
+                            <b>Color:</b>
+                            <p class="card-text" id="color_detail"></p>
+                            <b>Puertas:</b>
+                            <p class="card-text" id="doors_detail"></p>
+                            <b>Favorito:</b>
+                            <p class="card-text" id="favorite_detail"></p>
+                            <b>Cilindraje:</b>
+                            <p class="card-text" id="cylinder_detail"></p>
+                            <b>Velocidad:</b>
+                            <p class="card-text" id="velocity_detail"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script>
+        let route = '/add'
+        function openModal(title = 'Registrar Carro', btnText = 'Guardar', btnClass = 'btn-primary') {
+            document.querySelector('#form').reset()
+            const modal = new bootstrap.Modal(document.querySelector('#modalForm'))
+            document.querySelector('#modalTitle').innerHTML = title
+            const button = document.querySelector('#btnModalAction')
+            button.innerHTML = btnText
+            if (btnClass === 'btn-primary') {
+                button.classList.remove('btn-success')
+                button.classList.add(btnClass)
+            } else {
+                button.classList.remove('btn-primary')
+                button.classList.add(btnClass)
+            }
+            modal.show()
+        }
+
+        async function save() {
+            //e.preventDefault()
+            const form = document.querySelector('#form')
+            if (form.checkValidity()) {
+                const formData = new FormData(form);
+                try {
+                    const response = await axios.post(route, formData);
+                    if (response.data) {
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                // Si el formulario no es válido, muestra un mensaje de error o realiza alguna acción adicional
+                swal('Ingrese bien los datos!')
+            }
+
+        }
+
+        async function show_data(cardId) {
+            const input = document.querySelector("#photo");
+            input.required = false;
+            openModal('Editando Carro', 'Actualizar', 'btn-success')
+            try {
+                const response = await axios.get(`edit/${cardId}`)
+                if (response.data) {
+                    const { brand, model, color, year, doors, is_favorite, cylinder_capacity, velocity } = response.data
+                    document.querySelector('#brand').value = brand
+                    document.querySelector('#model').value = model
+                    document.querySelector('#color').value = color
+                    document.querySelector('#year').value = year
+                    document.querySelector('#doors').value = doors
+                    document.querySelector('#favorite').value = is_favorite ? 1 : 0
+                    document.querySelector('#cylinder_capacity').value = cylinder_capacity
+                    document.querySelector('#velocity').value = velocity
+                    route = `/update/${cardId}`
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        function delete_car(carId) {
+            swal({
+                title: "Estas seguro?",
+                text: "Una vez eliminado no hay forma de recuperarlo!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then(async (willDelete) => {
+                    if (willDelete) {
+                        const response = await axios.delete(`/delete/${carId}`)
+                        if (response.data) {
+                            console.log(response.data);
+                            swal("Exito! Registro eliminado!", {
+                                icon: "success",
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    }
+                });
+        }
+
+        async function show_detail(cardId) {
+            const modalDetail = new bootstrap.Modal(document.querySelector('#modalDetail'))
+            modalDetail.show()
+            try {
+                const response = await axios.get(`edit/${cardId}`)
+                if (response.data) {
+                    const { brand, model, color, photo, year, doors, is_favorite, cylinder_capacity, velocity } = response.data
+                    document.querySelector('#brand_detail').textContent = brand
+                    document.querySelector('#model_detail').textContent = model
+                    document.querySelector('#color_detail').textContent = color
+                    document.querySelector('#doors_detail').textContent = doors
+                    document.querySelector('#cylinder_detail').textContent = cylinder_capacity
+                    document.querySelector('#velocity_detail').textContent = velocity
+                    document.querySelector('#favorite_detail').textContent = is_favorite ? 'Si' : 'No'
+                    document.getElementById("photo_detail").src = `static/images/${photo}`;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    </script>
+</body>
+
+</html>

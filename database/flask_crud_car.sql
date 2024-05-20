@@ -34,9 +34,12 @@ CREATE TABLE `car` (
   `cylinder_capacity` float NOT NULL,
   `velocity` float DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+INSERT INTO `car` (`id`, `brand`, `model`, `year`, `doors`, `is_favorite`, `photo`, `color`, `cylinder_capacity`, `velocity`) VALUES
+(19, 'ljhjl', 'hkjh', 2020, 2, 1, '20240520092959_carro.jpg', 'black', 25665500, 454565),
+(20, 'jjjijijpij', 'ikjpjinpn', 2020, 2, 1, '20240520093114_carro.jpg', 'red', 45454, 46454),
+(25, 'Chevrolet', 'Aveo', 2024, 4, 1, '20240520094805_carro_azul.jpg', 'blue', 10000, 180);
 --
 -- Dumping data for table `car`
 --

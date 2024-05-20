@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from services.car_services import create_car, list_car, delete_car, show_car, update_car, found_image
@@ -28,7 +29,9 @@ def create():
         if photo == None:
             return 'Please, enter image'
         else:
-            filename = secure_filename(photo.filename)
+            original_filename = secure_filename(photo.filename)
+            filename = set_image(original_filename)
+            
             create_car(brand, model, year, doors, favorite,
                        filename, color, cylinder_capacity, velocity)
             save_image(filename, photo)
@@ -59,7 +62,8 @@ def update(id):
                        None, color, cylinder_capacity, velocity)
             return jsonify({'message': 'Car Updated!'})
         else:
-            filename = secure_filename(photo.filename)
+            original_filename = secure_filename(photo.filename)
+            filename = set_image(original_filename)
             old_image = found_image(id)
             update_car(id, brand, model, year, doors, favorite,
                        filename, color, cylinder_capacity, velocity)
@@ -75,6 +79,9 @@ def delete(id):
         delete_image(response)
         return jsonify({'message': 'Car deleted!'})
 
+def set_image(original_filename):
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    return f"{timestamp}_{original_filename}"
 
 def save_image(filename, photo):
     photo.save(os.path.join('static/images/', filename))

@@ -63,14 +63,14 @@
     </div>
 
     <!-- Modal Form -->
-    <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalForm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="modalTitle"></h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="form" enctype="multipart/form-data">
+                <form id="form" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -93,7 +93,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="year" class="form-label">Año</label>
-                                <input type="number" class="form-control" name="year" id="year" min="1990" max="2024"
+                                <input type="number" class="form-control" name="year" id="year" min="1"
                                     required>
                             </div>
                             <div class="col-md-6">
@@ -120,18 +120,18 @@
                             <div class="col-md-6">
                                 <label for="cylinder_capacity" class="form-label">Cilindraje</label>
                                 <input type="number" class="form-control" name="cylinder_capacity"
-                                    id="cylinder_capacity" min="100" required>
+                                    id="cylinder_capacity" min="1" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="velocity" class="form-label">Velocidad</label>
-                                <input type="number" class="form-control" name="velocity" id="velocity" min="100"
+                                <input type="number" class="form-control" name="velocity" id="velocity" min="1"
                                     required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" id="btnModalAction" onclick="save()" class="btn">Guardar</button>
+                        <button type="submit" id="btnModalAction" onclick="save(event)" class="btn">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -139,7 +139,7 @@
     </div>
 
     <!-- Modal Detail-->
-    <div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -147,25 +147,53 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="card mx-auto" style="width: 18rem; border: none !important;">
-                        <img id="photo_detail" src="" class="card-img-top" alt="">
-                        <div class="card-body">
-                            <b>Marca:</b>
-                            <p class="card-text" id="brand_detail"></p>
-                            <b>Modelo:</b>
-                            <p class="card-text" id="model_detail"></p>
-                            <b>Color:</b>
-                            <p class="card-text" id="color_detail"></p>
-                            <b>Puertas:</b>
-                            <p class="card-text" id="doors_detail"></p>
-                            <b>Favorito:</b>
-                            <p class="card-text" id="favorite_detail"></p>
-                            <b>Cilindraje:</b>
-                            <p class="card-text" id="cylinder_detail"></p>
-                            <b>Velocidad:</b>
-                            <p class="card-text" id="velocity_detail"></p>
+                    <img id="photo_detail" src="" class="card-img-top" alt="">
+                        <div class="mt-5">
+                            <div class="row">
+                                <div class="col-md-6 text-center">
+                                    <span>
+                                        <b>Marca:</b>
+                                        <span class="card-text" id="brand_detail"></span>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <span>
+                                        <b>Modelo:</b>
+                                        <span class="card-text" id="model_detail"></span>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <span>
+                                        <b>Color:</b>
+                                        <span class="card-text" id="color_detail"></span>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <span>
+                                        <b>Puertas:</b>
+                                        <span class="card-text" id="doors_detail"></span>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <span>
+                                        <b>Favorito:</b>
+                                        <span class="card-text" id="favorite_detail"></span>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <span>
+                                        <b>Cilindraje:</b>
+                                        <span class="card-text" id="cylinder_detail"></span>
+                                    </span>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <span>
+                                        <b>Velocidad:</b>
+                                        <span class="card-text" id="velocity_detail"></span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -196,24 +224,29 @@
             modal.show()
         }
 
-        async function save() {
-            //e.preventDefault()
+        async function save(event) {
+            event.preventDefault()
             const form = document.querySelector('#form')
             if (form.checkValidity()) {
                 const formData = new FormData(form);
                 try {
                     const response = await axios.post(route, formData);
                     if (response.data) {
-                        window.location.reload();
+                        swal({
+                            title: "Exito!",
+                            text: "Acción Exitosa!",
+                            icon: "success",
+                            button: "Ok",
+                          }).then(success => window.location.reload())
+                        
                     }
                 } catch (error) {
                     console.error(error);
                 }
             } else {
                 // Si el formulario no es válido, muestra un mensaje de error o realiza alguna acción adicional
-                swal('Ingrese bien los datos!')
+                swal("Alerta!", "Llene todos los datos!", "warning");
             }
-
         }
 
         async function show_data(cardId) {
